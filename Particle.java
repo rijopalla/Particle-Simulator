@@ -1,21 +1,21 @@
 
 public class Particle {
-    public float x, y;
-    public float angle;
-    public float velocity;
+    public double x, y;
+    public double angle; //angle in degrees
+    public double velocity; //velocity in pixels per second
 
-    public float getAngle() {
-        return this.angle;
+
+    public Particle(double x, double y, double velocity, double angle) {
+        this.x = x;
+        this.y = y;
+        this.velocity = velocity;
+        this.angle  = Math.toRadians(angle);
     }
 
-    public float getVelocity() {
-        return this.velocity;
+    void updatePosition(double dt) {
+        x += velocity * Math.cos(angle) * dt;
+        y += velocity * Math.sin(angle) * dt;
     }
-
-    // public float updatePosition() {
-
-    // }
-
     
 }
 
