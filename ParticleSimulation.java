@@ -7,15 +7,16 @@ import java.util.TimerTask;
 
 public class ParticleSimulation extends JPanel {
     private Canvas canvas;
-    private JTextField numParticlesField, startXField, startYField, velocityField, startThetaField;
-    private JButton addButton, batchButton;
+    private JTextField  startXField, startYField, velocityField, startThetaField;
+    private JButton addButton;
+    private JRadioButton batchOption1, batchOption2, batchOption3;
 
     public ParticleSimulation() {
         setLayout(new BorderLayout());
 
         // Create sidebar panel
         JPanel sidebar = new JPanel();
-        sidebar.setLayout(new GridLayout(6, 2)); // Adjust grid layout as needed
+        sidebar.setLayout(new GridLayout(6, 1)); // Adjust grid layout as needed
         
         //initial
         // Add components to sidebar
@@ -58,20 +59,28 @@ public class ParticleSimulation extends JPanel {
         });
 
         //adding particles in batches
-        batchButton = new JButton("Add in batches");
+        JPanel batchPanel = new JPanel();
+        batchPanel.setLayout(new BoxLayout(batchPanel, BoxLayout.Y_AXIS));
 
-        //TODO: work on adding particles in batches
-        // batchButton.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         try {
-        //             double 
-        //         }
-        //     }
-        // })
+        batchOption1 = new JRadioButton("Form 1 (Start & End Point)");
+        batchOption2 = new JRadioButton("Form 2 (Angle)");
+        batchOption3 = new JRadioButton("Form 3 (Velocity)");
 
+        ButtonGroup batchGroup = new ButtonGroup();
+        batchGroup.add(batchOption1);
+        batchGroup.add(batchOption1);
+        batchGroup.add(batchOption1);
+
+        batchPanel.add(batchOption1);
+        batchPanel.add(batchOption2);
+        batchPanel.add(batchOption3);
+
+        sidebar.add(new JLabel("Adding particles in batches: "));
+        sidebar.add(batchPanel);
         sidebar.add(addButton);
-        sidebar.add(batchButton);
+
+        //TODO: add logic when adding particles in batches
+
 
         // Main simulation panel
         canvas = new Canvas();
@@ -94,8 +103,8 @@ public class ParticleSimulation extends JPanel {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Particle Simulation");
-            ParticleSimulation sim = new ParticleSimulation();
-            frame.setContentPane(sim);
+            ParticleSimulation ps = new ParticleSimulation();
+            frame.setContentPane(ps);
             frame.pack();
             frame.setSize(1500, 720); // Adjust size to accommodate sidebar
             frame.setLocationRelativeTo(null);
