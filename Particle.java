@@ -1,26 +1,31 @@
-class Particle {
-    double x, y, vx, vy;
-    double radius = 5;
+import java.awt.*;
 
-    public Particle(double x, double y, double velocity, double angleInDegrees) {
+public class Particle {
+    private double x, y, velocity, theta;
+    private int diameter = 5; //particle size
+
+    public Particle(double x, double y, double velocity, double theta) {
         this.x = x;
         this.y = y;
-        double angleInRadians = Math.toRadians(angleInDegrees);
-        this.vx = velocity * Math.cos(angleInRadians);
-        this.vy = velocity * Math.sin(angleInRadians);
+        this.velocity = velocity;
+        this.theta = Math.toRadians(theta); // Convert to radians
     }
 
-    public void updatePosition() {
-        x += vx;
-        y += vy;
+    public void update(Canvas canvas) {
+        x += velocity * Math.cos(theta);
+        y += velocity * Math.sin(theta);
+
+        //check for boundary collision and reflect
+        if (x <= 0 || x >= canvas.getWidth() - diameter) {
+            theta = Math.PI - theta; //reflect horizontally
+        }
+        if (y <= 0 || y >= canvas.getHeight() - diameter) {
+            theta = -theta; //reflect vertically
+        }
     }
 
-    public void bounceOffWalls(int width, int height) {
-        if (x - radius <= 0 || x + radius >= width) {
-            vx *= -1; // Reverse horizontal direction
-        }
-        if (y - radius <= 0 || y + radius >= height) {
-            vy *= -1; // Reverse vertical direction
-        }
+    public void draw(Graphics g) {
+        g.fillOval((int) x, (int) y, 5, 5);
     }
+    
 }
