@@ -22,10 +22,15 @@ public class Particle {
         if (y <= 0 || y >= canvas.getHeight() - diameter) {
             theta = -theta; //reflect vertically
         }
+
+        //make sure particles stay within boundaries after reflection
+        x = Math.max(0, Math.min(x, canvas.getWidth() - diameter));
+        y = Math.max(0, Math.min(y, canvas.getHeight() - diameter));
     }
 
-    public void draw(Graphics g) {
-        g.fillOval((int) x, (int) y, 5, 5);
+    public void draw(Graphics g, int canvasHeight) {
+        int drawY = canvasHeight - (int)y - diameter; //invert the y-coordinates to meet specs
+        g.fillOval((int)x, drawY, diameter, diameter);
     }
     
 }

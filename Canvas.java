@@ -24,9 +24,9 @@ public class Canvas extends JPanel{
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for (Particle p : particles) {
+        for (Particle p : particles) { //update and draw particles
             p.update(this);
-            p.draw(g);
+            p.draw(g, getHeight());
         }
 
         //get FPS
