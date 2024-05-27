@@ -8,7 +8,7 @@ import java.util.TimerTask;
 public class ParticleSimulation extends JPanel {
     private Canvas canvas;
     private JTextField numParticlesField, startXField, startYField, velocityField, startThetaField;
-    private JButton addButton;
+    private JButton addButton, batchButton;
 
     public ParticleSimulation() {
         setLayout(new BorderLayout());
@@ -57,7 +57,21 @@ public class ParticleSimulation extends JPanel {
             }
         });
 
+        //adding particles in batches
+        batchButton = new JButton("Add in batches");
+
+        //TODO: work on adding particles in batches
+        // batchButton.addActionListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         try {
+        //             double 
+        //         }
+        //     }
+        // })
+
         sidebar.add(addButton);
+        sidebar.add(batchButton);
 
         // Main simulation panel
         canvas = new Canvas();
