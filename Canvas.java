@@ -1,33 +1,27 @@
 import java.awt.Graphics;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
+import javax.swing.*;
+import java.util.concurrent.*;
 
-public class Canvas {
-    private static final int WIDTH = 1280;
-    private static final int HEIGHT = 720;
+public class Canvas extends JPanel {
     private List<Particle> particles = new ArrayList<>();
+    private int width, height;
+
+    public Canvas(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
 
     public void addParticle(Particle particle) {
         particles.add(particle);
     }
 
     public void draw(Graphics g) {
-        for (Particle p : particles) {
-            g.fillOval((int)p.x - 5, (int)p.y - 5, 10, 10); // Draw particle as a small circle
-        }
-    }
-
-    public void update(double dt) {
-        for (Particle p : particles) {
-            p.updatePosition(dt);
-
-            // Handle collisions
-            if (p.x < 0 || p.x > WIDTH) {
-                p.angle = Math.PI - p.angle; // Reflect horizontally
-            }
-            if (p.y < 0 || p.y > HEIGHT) {
-                p.angle = -p.angle; // Reflect vertically
-            }
+        for (Particle particle : particles) {
+            particle.updatePosition();
+            particle.bounceOffWalls(width, height);
+            g.fillOval((int)(particle.x - particle.radius), (int)(particle.y - particle.radius), (int)(2 * particle.radius), (int)(2 * particle.radius));
         }
     }
 }
+
