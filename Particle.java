@@ -1,16 +1,21 @@
 import java.awt.*;
 
 public class Particle {
-    private double x, y, velocity, theta;
+    private double x, y, velocity, theta, endTheta;
     private double targetX, targetY;
     private int diameter = 5; //particle size
     private boolean hasTarget;
 
     public Particle(double x, double y, double velocity, double theta) {
+        this(x, y, velocity, theta, Double.NaN); // Call the overloaded constructor with NaN for endTheta
+    }
+
+    public Particle(double x, double y, double velocity, double theta, double endTheta) {
         this.x = x;
         this.y = y;
         this.velocity = velocity;
         this.theta = Math.toRadians(theta); // Convert to radians
+        this.endTheta = Math.toRadians(endTheta); // Convert to radians
         this.hasTarget = false;
     }
 
@@ -27,6 +32,14 @@ public class Particle {
     public void update(Canvas canvas) {
         x += velocity * Math.cos(theta);
         y += velocity * Math.sin(theta);
+
+        // check if the particle has reached or exceeded endTheta
+        if (!Double.isNaN(endTheta) && Math.abs(theta - endTheta) < 0.01) {
+            // This logic assumes the angle difference threshold is small enough to consider as reached
+            hasTarget = true;
+            targetX = x;
+            targetY = y;
+        }
 
         //check for boundary collision and reflect
         if (x <= 0 || x >= canvas.getWidth() - diameter) {

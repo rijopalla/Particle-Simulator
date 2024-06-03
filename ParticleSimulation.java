@@ -77,11 +77,23 @@ public class ParticleSimulation extends JPanel {
         sidebar.add(batchPanel);
         sidebar.add(addButton);
 
+
+        //form 1
         batchOption1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (batchOption1.isSelected()) {
                     handleBatchOption1();
+                }
+            }
+        });
+
+        //form 2
+        batchOption2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (batchOption2.isSelected()) {
+                    handleBatchOption2();
                 }
             }
         });
@@ -150,6 +162,48 @@ public class ParticleSimulation extends JPanel {
             }
         }
     }
+
+    private void handleBatchOption2() {
+        JTextField numParticlesInput = new JTextField();
+        JTextField startThetaInput = new JTextField();
+        JTextField endThetaInput = new JTextField();
+    
+        JPanel panel = new JPanel(new GridLayout(3, 2));
+        panel.add(new JLabel("Number of Particles:"));
+        panel.add(numParticlesInput);
+        panel.add(new JLabel("Start Theta (degrees):"));
+        panel.add(startThetaInput);
+        panel.add(new JLabel("End Theta (degrees):"));
+        panel.add(endThetaInput);
+    
+        int result = JOptionPane.showConfirmDialog(null, panel, "Batch Particle Input", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                int numParticles = Integer.parseInt(numParticlesInput.getText());
+                double startTheta = Double.parseDouble(startThetaInput.getText());
+                double endTheta = Double.parseDouble(endThetaInput.getText());
+    
+                if (numParticles < 2) {
+                    JOptionPane.showMessageDialog(ParticleSimulation.this, "Number of particles must be at least 2.");
+                    return;
+                }
+    
+                double thetaStep = (endTheta - startTheta) / (numParticles - 1);
+    
+                double startX = Double.parseDouble(this.startXField.getText());
+                double startY = Double.parseDouble(this.startYField.getText());
+                double velocity = Double.parseDouble(this.velocityField.getText());
+    
+                for (int i = 0; i < numParticles; i++) {
+                    double theta = startTheta + i * thetaStep;
+                    canvas.addParticle(new Particle(startX, startY, velocity, theta, endTheta));
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(ParticleSimulation.this, "Invalid input. Please check your entries.");
+            }
+        }
+    }
+    
     
 
     public static void main(String[] args) {
