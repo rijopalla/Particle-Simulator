@@ -7,7 +7,7 @@ import java.util.TimerTask;
 
 public class ParticleSimulation extends JPanel {
     private Canvas canvas;
-    private JTextField  startXField, startYField, velocityField, startThetaField;
+    private JTextField startXField, startYField, velocityField, startThetaField;
     private JButton addButton;
     private JRadioButton batchOption1, batchOption2, batchOption3;
 
@@ -17,8 +17,7 @@ public class ParticleSimulation extends JPanel {
         // Create sidebar panel
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new GridLayout(6, 1)); // Adjust grid layout as needed
-        
-        //initial
+
         // Add components to sidebar
         sidebar.add(new JLabel("Start X Position:"));
         startXField = new JTextField();
@@ -46,19 +45,18 @@ public class ParticleSimulation extends JPanel {
                     double velocity = Double.parseDouble(velocityField.getText());
                     double startTheta = Double.parseDouble(startThetaField.getText());
 
-                    //make sure particles are w/in bounds
+                    // Make sure particles are within bounds
                     startX = Math.min(startX, canvas.getWidth() - 5);
                     startY = Math.min(startY, canvas.getHeight() - 5);
 
                     canvas.addParticle(new Particle(startX, startY, velocity, startTheta));
-
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(ParticleSimulation.this, "Invalid input. Please check your entries.");
                 }
             }
         });
 
-        //adding particles in batches
+        // Adding particles in batches
         JPanel batchPanel = new JPanel();
         batchPanel.setLayout(new BoxLayout(batchPanel, BoxLayout.Y_AXIS));
 
@@ -68,8 +66,8 @@ public class ParticleSimulation extends JPanel {
 
         ButtonGroup batchGroup = new ButtonGroup();
         batchGroup.add(batchOption1);
-        batchGroup.add(batchOption1);
-        batchGroup.add(batchOption1);
+        batchGroup.add(batchOption2);
+        batchGroup.add(batchOption3);
 
         batchPanel.add(batchOption1);
         batchPanel.add(batchOption2);
@@ -79,8 +77,14 @@ public class ParticleSimulation extends JPanel {
         sidebar.add(batchPanel);
         sidebar.add(addButton);
 
-        //TODO: add logic when adding particles in batches
-
+        batchOption1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (batchOption1.isSelected()) {
+                    handleBatchOption1();
+                }
+            }
+        });
 
         // Main simulation panel
         canvas = new Canvas();
@@ -99,6 +103,54 @@ public class ParticleSimulation extends JPanel {
             }
         }, 0, 16); // Approximately 60 FPS
     }
+
+    private void handleBatchOption1() {
+        JTextField numParticlesField = new JTextField();
+        JTextField startXField = new JTextField();
+        JTextField startYField = new JTextField();
+        JTextField endXField = new JTextField();
+        JTextField endYField = new JTextField();
+    
+        JPanel panel = new JPanel(new GridLayout(5, 2));
+        panel.add(new JLabel("Number of Particles:"));
+        panel.add(numParticlesField);
+        panel.add(new JLabel("Start X Position:"));
+        panel.add(startXField);
+        panel.add(new JLabel("Start Y Position:"));
+        panel.add(startYField);
+        panel.add(new JLabel("End X Position:"));
+        panel.add(endXField);
+        panel.add(new JLabel("End Y Position:"));
+        panel.add(endYField);
+    
+        int result = JOptionPane.showConfirmDialog(null, panel, "Batch Particle Input", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                int numParticles = Integer.parseInt(numParticlesField.getText());
+                double startX = Double.parseDouble(startXField.getText());
+                double startY = Double.parseDouble(startYField.getText());
+                double endX = Double.parseDouble(endXField.getText());
+                double endY = Double.parseDouble(endYField.getText());
+    
+                if (numParticles < 2) {
+                    JOptionPane.showMessageDialog(ParticleSimulation.this, "Number of particles must be at least 2.");
+                    return;
+                }
+    
+                double dx = (endX - startX) / (numParticles - 1);
+                double dy = (endY - startY) / (numParticles - 1);
+    
+                for (int i = 0; i < numParticles; i++) {
+                    double particleX = startX + i * dx;
+                    double particleY = startY + i * dy;
+                    canvas.addParticle(new Particle(particleX, particleY, 1.0, 0, endX, endY)); // Adjust velocity and angle as needed
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(ParticleSimulation.this, "Invalid input. Please check your entries.");
+            }
+        }
+    }
+    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

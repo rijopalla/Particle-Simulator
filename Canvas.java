@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.awt.*;
 import javax.swing.JPanel;
+import java.util.Iterator;
 
 public class Canvas extends JPanel{
         private List<Particle> particles;
@@ -24,9 +25,15 @@ public class Canvas extends JPanel{
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for (Particle p : particles) { //update and draw particles
-            p.update(this);
-            p.draw(g, getHeight());
+        Iterator<Particle> it = particles.iterator();
+        while (it.hasNext()) {
+            Particle particle = it.next();
+            if (particle.checkTarget()) {
+                it.remove();
+            } else {
+                particle.update(this); //update the particle's position
+                particle.draw(g, getHeight()); //draw particle
+            }
         }
 
         //get FPS
