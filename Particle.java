@@ -4,7 +4,8 @@ public class Particle {
     private double x, y, velocity, theta, endTheta;
     private double targetX, targetY;
     private int diameter = 5; //particle size
-    private boolean hasTarget;
+    private boolean hasTarget; //if added through batch options
+    private boolean isBatch3 = false; //added through the third batch option
 
     public Particle(double x, double y, double velocity, double theta) {
         this(x, y, velocity, theta, Double.NaN); // Call the overloaded constructor with NaN for endTheta
@@ -76,6 +77,13 @@ public class Particle {
         return false; //target not yet reached
     }
 
+    public boolean checkTargetVelocity(double targetVelocity) {
+        if (velocity >= targetVelocity) {
+            return true; //target has been reached
+        }
+        return false; //target not yet reached
+    }
+
     private void computeTheta() {
         double dx = targetX - x;
         double dy = targetY - y;
@@ -88,6 +96,14 @@ public class Particle {
 
     public double getY() {
         return this.y;
+    }
+
+    public boolean isBatch3() {
+        return isBatch3;
+    }
+
+    public void setIsBatch3(boolean isBatch3) {
+        this.isBatch3 = isBatch3;
     }
     
 }

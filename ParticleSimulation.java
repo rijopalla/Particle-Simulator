@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -9,7 +10,8 @@ public class ParticleSimulation extends JPanel {
     private Canvas canvas;
     private JTextField startXField, startYField, velocityField, startThetaField;
     private JButton addButton;
-    private JRadioButton batchOption1, batchOption2, batchOption3;
+    private JRadioButton batchOption1, batchOption2;
+    public JRadioButton batchOption3;
 
     public ParticleSimulation() {
         setLayout(new BorderLayout());
@@ -94,6 +96,16 @@ public class ParticleSimulation extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (batchOption2.isSelected()) {
                     handleBatchOption2();
+                }
+            }
+        });
+
+        //form 3
+        batchOption3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (batchOption3.isSelected()) {
+                    handleBatchOption3();
                 }
             }
         });
@@ -203,8 +215,73 @@ public class ParticleSimulation extends JPanel {
             }
         }
     }
-    
-    
+
+private void handleBatchOption3() {
+    JTextField nInput = new JTextField();
+    JTextField startVelocityInput = new JTextField();
+    JTextField endVelocityInput = new JTextField();
+
+    JPanel panel = new JPanel(new GridLayout(3, 2));
+    panel.add(new JLabel("Number of Particles:"));
+    panel.add(nInput);
+    panel.add(new JLabel("Start Velocity:"));
+    panel.add(startVelocityInput);
+    panel.add(new JLabel("End Velocity:"));
+    panel.add(endVelocityInput);
+
+    int result = JOptionPane.showConfirmDialog(null, panel, "Batch Particle Input", JOptionPane.OK_CANCEL_OPTION);
+    if (result == JOptionPane.OK_OPTION) {
+        try {
+            int numParticles = Integer.parseInt(nInput.getText());
+            double startVelocity = Double.parseDouble(startVelocityInput.getText());
+            double endVelocity = Double.parseDouble(endVelocityInput.getText());
+
+            if (numParticles < 2) {
+                JOptionPane.showMessageDialog(ParticleSimulation.this, "Number of particles must be at least 2.");
+                return;
+            }
+
+            // Ensure start velocity is less than or equal to end velocity
+            if (startVelocity > endVelocity) {
+                JOptionPane.showMessageDialog(ParticleSimulation.this, "Start velocity must be less than or equal to end velocity.");
+                return;
+            }
+
+            double velocityStep = (endVelocity - startVelocity) / (numParticles - 1);
+
+            double startX = Double.parseDouble(this.startXField.getText());
+            double startY = Double.parseDouble(this.startYField.getText());
+            double theta = Double.parseDouble(this.startThetaField.getText());
+
+            for (int i = 0; i < numParticles; i++) {
+                double velocity = startVelocity + i * velocityStep;
+                Particle particle = new Particle(startX, startY, velocity, theta);
+                canvas.addParticle(particle);
+            }
+
+            // Continuous update and removal of particles
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    for (Particle particle : new ArrayList<>(canvas.getParticles())) {
+                        //only update and remove particles added through batchOption3
+                        if (particle.isBatch3()) {
+                            particle.update(canvas);
+                            if (particle.checkTargetVelocity(endVelocity)) {
+                                canvas.removeParticle(particle);
+                            }
+                        }
+                    }
+                    canvas.repaint();
+                }
+            }, 0, 16); // Approximately 60 FPS
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(ParticleSimulation.this, "Invalid input. Please check your entries.");
+        }
+    }
+}
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

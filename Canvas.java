@@ -9,6 +9,7 @@ public class Canvas extends JPanel{
         private int fps;
         private int frames;
         private long lastTime;
+        private ParticleSimulation ps;
 
     public Canvas() {
         particles = new ArrayList<>();
@@ -19,7 +20,17 @@ public class Canvas extends JPanel{
 
     public void addParticle(Particle p) {
         particles.add(p);
+        p.setIsBatch3(ps.batchOption3.isSelected());
         repaint(); // Repaint the canvas to show the new particle
+    }
+
+    public List<Particle> getParticles() {
+        return particles;
+    }
+
+    public void removeParticle(Particle p) {
+        particles.remove(p);
+        repaint();
     }
 
     @Override
