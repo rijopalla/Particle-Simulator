@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.*;
 
 public class ParticleSimulation extends JPanel {
     private Canvas canvas;
@@ -12,6 +13,7 @@ public class ParticleSimulation extends JPanel {
     private JButton addButton;
     private JRadioButton batchOption1, batchOption2;
     public JRadioButton batchOption3;
+    private ExecutorService threadPool; //TODO: implement load balancing for certain portions
 
     public ParticleSimulation() {
         setLayout(new BorderLayout());
