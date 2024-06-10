@@ -67,8 +67,8 @@ public class Canvas extends JPanel {
         // Calculate and display FPS
         frames++;
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastTime >= 1000) { // Update every 1 second
-            fps = (int) (frames / ((currentTime - lastTime) / 1000.0)); // Calculate FPS
+        if (currentTime - lastTime >= 500) { //update every 0.5 seconds
+            fps = (int) (frames / ((currentTime - lastTime) / 1000.0)); //calculate FPS
             frames = 0;
             lastTime = currentTime;
         }
