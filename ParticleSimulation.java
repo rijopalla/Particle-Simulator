@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -10,18 +9,16 @@ public class ParticleSimulation extends JPanel {
     private Canvas canvas;
     private JTextField startXField, startYField, velocityField, startThetaField;
     private JButton addButton;
-    private JRadioButton batchOption1, batchOption2;
-    public JRadioButton batchOption3;
-    
+    private JRadioButton batchOption1, batchOption2, batchOption3;
 
     public ParticleSimulation() {
         setLayout(new BorderLayout());
 
-        // Create sidebar panel
+        //create sidebar panel
         JPanel sidebar = new JPanel();
-        sidebar.setLayout(new GridLayout(6, 1)); // Adjust grid layout as needed
+        sidebar.setLayout(new GridLayout(6, 1)); 
 
-        // Add components to sidebar
+        //add components to sidebar
         sidebar.add(new JLabel("Start X Position:"));
         startXField = new JTextField();
         sidebar.add(startXField);
@@ -48,7 +45,7 @@ public class ParticleSimulation extends JPanel {
                     double velocity = Double.parseDouble(velocityField.getText());
                     double startTheta = Double.parseDouble(startThetaField.getText());
 
-                    // Make sure particles are within bounds
+                    //make sure particles are within bounds
                     startX = Math.min(startX, canvas.getWidth() - 5);
                     startY = Math.min(startY, canvas.getHeight() - 5);
 
@@ -59,7 +56,7 @@ public class ParticleSimulation extends JPanel {
             }
         });
 
-        // Adding particles in batches
+        //adding particles in batches
         JPanel batchPanel = new JPanel();
         batchPanel.setLayout(new BoxLayout(batchPanel, BoxLayout.Y_AXIS));
 
@@ -80,8 +77,6 @@ public class ParticleSimulation extends JPanel {
         sidebar.add(batchPanel);
         sidebar.add(addButton);
 
-
-        //form 1
         batchOption1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -91,7 +86,6 @@ public class ParticleSimulation extends JPanel {
             }
         });
 
-        //form 2
         batchOption2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -101,7 +95,6 @@ public class ParticleSimulation extends JPanel {
             }
         });
 
-        //form 3
         batchOption3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -111,25 +104,25 @@ public class ParticleSimulation extends JPanel {
             }
         });
 
-        // Main simulation panel
+        //simulation panel
         canvas = new Canvas();
         canvas.setPreferredSize(new Dimension(1280, 720));
 
-        // Add sidebar and simulation panel to main panel
+        //add sidebar and simulation panel to main panel
         add(sidebar, BorderLayout.EAST);
         add(canvas, BorderLayout.CENTER);
 
-        // Set up a timer to repaint the canvas periodically
+        //set up a timer to repaint the canvas periodically
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 canvas.repaint();
             }
-        }, 0, 16); // Approximately 60 FPS
+        }, 0, 16); //approximately 60 FPS
     }
 
-    private void handleBatchOption1() {
+    private void handleBatchOption1() { //if batch option 1 was picked
         JTextField numParticlesField = new JTextField();
         JTextField startXField = new JTextField();
         JTextField startYField = new JTextField();
@@ -176,11 +169,11 @@ public class ParticleSimulation extends JPanel {
         }
     }
 
-    private void handleBatchOption2() {
+    private void handleBatchOption2() { //if batch option 2 was picked
         JTextField numParticlesInput = new JTextField();
         JTextField startThetaInput = new JTextField();
         JTextField endThetaInput = new JTextField();
-    
+
         JPanel panel = new JPanel(new GridLayout(3, 2));
         panel.add(new JLabel("Number of Particles:"));
         panel.add(numParticlesInput);
@@ -188,28 +181,27 @@ public class ParticleSimulation extends JPanel {
         panel.add(startThetaInput);
         panel.add(new JLabel("End Theta (degrees):"));
         panel.add(endThetaInput);
-    
+
         int result = JOptionPane.showConfirmDialog(null, panel, "Batch Particle Input", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             try {
                 int numParticles = Integer.parseInt(numParticlesInput.getText());
-                double startTheta = Double.parseDouble(startThetaInput.getText());
-                double endTheta = Double.parseDouble(endThetaInput.getText());
-    
+                double startTheta = Math.toRadians(Double.parseDouble(startThetaInput.getText()));
+                double endTheta = Math.toRadians(Double.parseDouble(endThetaInput.getText()));
+
                 if (numParticles < 2) {
                     JOptionPane.showMessageDialog(ParticleSimulation.this, "Number of particles must be at least 2.");
                     return;
                 }
-    
-                double startX = Double.parseDouble(this.startXField.getText());
-                double startY = Double.parseDouble(this.startYField.getText());
-                double velocity = Double.parseDouble(this.velocityField.getText());
 
-                double angleIncrement = (endTheta - startTheta) / (numParticles - 1);
-    
+                double dTheta = (endTheta - startTheta) / (numParticles - 1);
+                double startX = 640;
+                double startY = 360;
+                double velocity = 1.0;
+
                 for (int i = 0; i < numParticles; i++) {
-                    double theta = startTheta + i * angleIncrement;
-                    canvas.addParticle(new Particle(startX + 10, startY + 10, velocity, theta, endTheta));
+                    double theta = startTheta + i * dTheta;
+                    canvas.addParticle(new Particle(startX, startY, velocity, Math.toDegrees(theta)));
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(ParticleSimulation.this, "Invalid input. Please check your entries.");
@@ -217,83 +209,51 @@ public class ParticleSimulation extends JPanel {
         }
     }
 
-private void handleBatchOption3() {
-    JTextField nInput = new JTextField();
-    JTextField startVelocityInput = new JTextField();
-    JTextField endVelocityInput = new JTextField();
+    private void handleBatchOption3() { //if batch option 3 was picked
+        JTextField numParticlesInput = new JTextField();
+        JTextField startVelocityInput = new JTextField();
+        JTextField endVelocityInput = new JTextField();
 
-    JPanel panel = new JPanel(new GridLayout(3, 2));
-    panel.add(new JLabel("Number of Particles:"));
-    panel.add(nInput);
-    panel.add(new JLabel("Start Velocity:"));
-    panel.add(startVelocityInput);
-    panel.add(new JLabel("End Velocity:"));
-    panel.add(endVelocityInput);
+        JPanel panel = new JPanel(new GridLayout(3, 2));
+        panel.add(new JLabel("Number of Particles:"));
+        panel.add(numParticlesInput);
+        panel.add(new JLabel("Start Velocity:"));
+        panel.add(startVelocityInput);
+        panel.add(new JLabel("End Velocity:"));
+        panel.add(endVelocityInput);
 
-    int result = JOptionPane.showConfirmDialog(null, panel, "Batch Particle Input", JOptionPane.OK_CANCEL_OPTION);
-    if (result == JOptionPane.OK_OPTION) {
-        try {
-            int numParticles = Integer.parseInt(nInput.getText());
-            double startVelocity = Double.parseDouble(startVelocityInput.getText());
-            double endVelocity = Double.parseDouble(endVelocityInput.getText());
+        int result = JOptionPane.showConfirmDialog(null, panel, "Batch Particle Input", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                int numParticles = Integer.parseInt(numParticlesInput.getText());
+                double startVelocity = Double.parseDouble(startVelocityInput.getText());
+                double endVelocity = Double.parseDouble(endVelocityInput.getText());
 
-            if (numParticles < 2) {
-                JOptionPane.showMessageDialog(ParticleSimulation.this, "Number of particles must be at least 2.");
-                return;
-            }
-
-            // Ensure start velocity is less than or equal to end velocity
-            if (startVelocity > endVelocity) {
-                JOptionPane.showMessageDialog(ParticleSimulation.this, "Start velocity must be less than or equal to end velocity.");
-                return;
-            }
-
-            double velocityStep = (endVelocity - startVelocity) / (numParticles - 1);
-
-            double startX = Double.parseDouble(this.startXField.getText());
-            double startY = Double.parseDouble(this.startYField.getText());
-            double theta = Double.parseDouble(this.startThetaField.getText());
-
-            for (int i = 0; i < numParticles; i++) {
-                double velocity = startVelocity + i * velocityStep;
-                Particle particle = new Particle(startX, startY, velocity, theta);
-                canvas.addParticle(particle);
-            }
-
-            // Continuous update and removal of particles
-            Timer timer = new Timer();
-            timer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    for (Particle particle : new ArrayList<>(canvas.getParticles())) {
-                        //only update and remove particles added through batchOption3
-                        if (particle.isBatch3()) {
-                            particle.update(canvas);
-                            if (particle.checkTargetVelocity(endVelocity)) {
-                                canvas.removeParticle(particle);
-                            }
-                        }
-                    }
-                    canvas.repaint();
+                if (numParticles < 2) {
+                    JOptionPane.showMessageDialog(ParticleSimulation.this, "Number of particles must be at least 2.");
+                    return;
                 }
-            }, 0, 16); // Approximately 60 FPS
 
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(ParticleSimulation.this, "Invalid input. Please check your entries.");
+                double dVelocity = (endVelocity - startVelocity) / (numParticles - 1);
+                double startX = 640;
+                double startY = 360;
+                double startTheta = 0;
+
+                for (int i = 0; i < numParticles; i++) {
+                    double velocity = startVelocity + i * dVelocity;
+                    canvas.addParticle(new Particle(startX, startY, velocity, startTheta));
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(ParticleSimulation.this, "Invalid input. Please check your entries.");
+            }
         }
     }
-}
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Particle Simulation");
-            ParticleSimulation ps = new ParticleSimulation();
-            frame.setContentPane(ps);
-            frame.pack();
-            frame.setSize(1500, 720); // Adjust size to accommodate sidebar
-            frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
-        });
+        JFrame frame = new JFrame("Particle Simulation");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(new ParticleSimulation());
+        frame.pack();
+        frame.setVisible(true);
     }
 }

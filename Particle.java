@@ -8,15 +8,15 @@ public class Particle {
     private boolean isBatch3 = false; //added through the third batch option
 
     public Particle(double x, double y, double velocity, double theta) {
-        this(x, y, velocity, theta, Double.NaN); // Call the overloaded constructor with NaN for endTheta
+        this(x, y, velocity, theta, Double.NaN); //call overloaded constructor with NaN for endTheta
     }
 
     public Particle(double x, double y, double velocity, double theta, double endTheta) {
         this.x = x;
         this.y = y;
         this.velocity = velocity;
-        this.theta = Math.toRadians(theta); // Convert to radians
-        this.endTheta = Math.toRadians(endTheta); // Convert to radians
+        this.theta = Math.toRadians(theta); //convert to radians
+        this.endTheta = Math.toRadians(endTheta); //convert to radians
         this.hasTarget = false;
     }
 
@@ -34,9 +34,9 @@ public class Particle {
         x += velocity * Math.cos(theta);
         y += velocity * Math.sin(theta);
 
-        // check if the particle has reached or exceeded endTheta
+        //check if the particle has reached or exceeded endTheta
         if (!Double.isNaN(endTheta) && Math.abs(theta - endTheta) < 0.01) {
-            // This logic assumes the angle difference threshold is small enough to consider as reached
+            //this logic assumes the angle difference threshold is small enough to consider as reached
             hasTarget = true;
             targetX = x;
             targetY = y;
@@ -55,9 +55,9 @@ public class Particle {
         y = Math.max(0, Math.min(y, canvas.getHeight() - diameter));
     }
 
-    public void draw(Graphics g, int canvasHeight) {
-        int drawY = canvasHeight - (int)y - diameter; //invert the y-coordinates to meet specs
-        g.fillOval((int)x, drawY, diameter, diameter);
+    public void draw(Graphics g, int canvasHeight) { 
+        int drawY = canvasHeight - (int)y - diameter; //invert y-coordinates to meet specs where coordinate (0,0) should be on the bottom left
+        g.fillOval((int)x, drawY, diameter, diameter); 
     }
 
     public boolean checkTarget() {
