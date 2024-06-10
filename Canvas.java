@@ -38,41 +38,46 @@ public class Canvas extends JPanel {
         repaint();
     }
 
+    public void updateParticles() {
+        List<Particle> particlesToRemove = new ArrayList<>();
+    
+        synchronized (particles) {
+            for (Particle particle : particles) {
+                particle.update(this);
+                if (particle.checkTarget()) {
+                    particlesToRemove.add(particle);
+                }
+            }
+            particles.removeAll(particlesToRemove);
+            repaint();
+        }
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        //update and draw particles
-        List<Particle> particlesToRemove = new ArrayList<>();
-        for (Particle particle : particles) {
-            particle.update(this); // update the particle's position
-            if (particle.checkTarget()) { //if particle has reached target
-                particlesToRemove.add(particle); // mark particle to be removed
-            } else {
-                particle.draw(g, getHeight()); // keep particle
+    
+        // Draw particles
+        synchronized (particles) {
+            for (Particle particle : particles) {
+                particle.draw(g, getHeight());
             }
         }
-
-        //remove particles that have reached the target
-        synchronized (particles) {
-            particles.removeAll(particlesToRemove);
-        }
-
-        //get FPS
+    
+        // Calculate and display FPS
         frames++;
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastTime >= 1000) { // update every 1 second
-            fps = (int) (frames / ((currentTime - lastTime) / 1000.0)); // calculate FPS
+        if (currentTime - lastTime >= 1000) { // Update every 1 second
+            fps = (int) (frames / ((currentTime - lastTime) / 1000.0)); // Calculate FPS
             frames = 0;
             lastTime = currentTime;
         }
-
-        //display FPS
+    
         g.setColor(Color.BLACK);
         g.drawString("FPS: " + fps, 10, 10);
     }
 
-    //shutdown ExecutorService when the application exits
+    // shutdown ExecutorService when the application exits
     public void shutdown() {
         es.shutdown();
         try {

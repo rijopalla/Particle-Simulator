@@ -117,6 +117,7 @@ public class ParticleSimulation extends JPanel {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
+                canvas.updateParticles();
                 canvas.repaint();
             }
         }, 0, 16); //approximately 60 FPS
@@ -162,6 +163,7 @@ public class ParticleSimulation extends JPanel {
                     double particleX = startX + i * dx;
                     double particleY = startY + i * dy;
                     canvas.addParticle(new Particle(particleX, particleY, 1.0, 0, endX, endY));
+                    canvas.repaint();
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(ParticleSimulation.this, "Invalid input. Please check your entries.");
@@ -173,7 +175,7 @@ public class ParticleSimulation extends JPanel {
         JTextField numParticlesInput = new JTextField();
         JTextField startThetaInput = new JTextField();
         JTextField endThetaInput = new JTextField();
-
+    
         JPanel panel = new JPanel(new GridLayout(3, 2));
         panel.add(new JLabel("Number of Particles:"));
         panel.add(numParticlesInput);
@@ -181,27 +183,26 @@ public class ParticleSimulation extends JPanel {
         panel.add(startThetaInput);
         panel.add(new JLabel("End Theta (degrees):"));
         panel.add(endThetaInput);
-
+    
         int result = JOptionPane.showConfirmDialog(null, panel, "Batch Particle Input", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             try {
                 int numParticles = Integer.parseInt(numParticlesInput.getText());
-                double startTheta = Math.toRadians(Double.parseDouble(startThetaInput.getText()));
-                double endTheta = Math.toRadians(Double.parseDouble(endThetaInput.getText()));
-
+                double startTheta = Double.parseDouble(startThetaInput.getText());
+                double endTheta = Double.parseDouble(endThetaInput.getText());
+    
                 if (numParticles < 2) {
                     JOptionPane.showMessageDialog(ParticleSimulation.this, "Number of particles must be at least 2.");
                     return;
                 }
-
+    
                 double dTheta = (endTheta - startTheta) / (numParticles - 1);
                 double startX = 640;
                 double startY = 360;
                 double velocity = 1.0;
-
+    
                 for (int i = 0; i < numParticles; i++) {
-                    double theta = startTheta + i * dTheta;
-                    canvas.addParticle(new Particle(startX, startY, velocity, Math.toDegrees(theta)));
+                    canvas.addParticle(new Particle(startX, startY, velocity, startTheta + i * dTheta, endTheta));
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(ParticleSimulation.this, "Invalid input. Please check your entries.");
@@ -213,7 +214,7 @@ public class ParticleSimulation extends JPanel {
         JTextField numParticlesInput = new JTextField();
         JTextField startVelocityInput = new JTextField();
         JTextField endVelocityInput = new JTextField();
-
+    
         JPanel panel = new JPanel(new GridLayout(3, 2));
         panel.add(new JLabel("Number of Particles:"));
         panel.add(numParticlesInput);
@@ -221,27 +222,26 @@ public class ParticleSimulation extends JPanel {
         panel.add(startVelocityInput);
         panel.add(new JLabel("End Velocity:"));
         panel.add(endVelocityInput);
-
+    
         int result = JOptionPane.showConfirmDialog(null, panel, "Batch Particle Input", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             try {
                 int numParticles = Integer.parseInt(numParticlesInput.getText());
                 double startVelocity = Double.parseDouble(startVelocityInput.getText());
                 double endVelocity = Double.parseDouble(endVelocityInput.getText());
-
+    
                 if (numParticles < 2) {
                     JOptionPane.showMessageDialog(ParticleSimulation.this, "Number of particles must be at least 2.");
                     return;
                 }
-
+    
                 double dVelocity = (endVelocity - startVelocity) / (numParticles - 1);
                 double startX = 640;
                 double startY = 360;
-                double startTheta = 0;
-
+                double theta = 0;
+    
                 for (int i = 0; i < numParticles; i++) {
-                    double velocity = startVelocity + i * dVelocity;
-                    canvas.addParticle(new Particle(startX, startY, velocity, startTheta));
+                    canvas.addParticle(new Particle(startX, startY, startVelocity + i * dVelocity, theta, endVelocity, true));
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(ParticleSimulation.this, "Invalid input. Please check your entries.");
